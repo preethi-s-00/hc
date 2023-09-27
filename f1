@@ -1,0 +1,42 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+const urls= ["https://paymentms.apps.virginmedia.ie/alive","https://hawkeye.apps.virginmedia.ie/alive"];
+
+const promises = urls.map(url => {
+  return fetch(url)
+    .then(response => {
+      const result = {
+        status: response.status, // HTTP status code
+        statusText: response.statusText, // HTTP status text
+      };
+
+      if (!response.ok) {
+        // If the response is not ok (e.g., 404, 500), include an error flag
+        result.error = true;
+      }
+
+      return response.ok // Parse response as JSON
+       // .then(data => {
+        //  result.data = data; // Include the parsed JSON data
+         // return result; // Return the result object
+        //});
+    })
+    .catch(error => {
+      console.error(`There was a problem with the fetch operation for ${url}:`, error);
+      throw error; // Rethrow the error to handle it later if needed
+    });
+});
+
+
+// If you want to wait for all requests to complete before doing something
+Promise.all(promises)
+  .then(results => {
+    console.log('All requests completed:', results);
+  })
+  .catch(error => {
+    console.error('One or more requests failed:', error);
+  });
+
+
+
+
+  //
